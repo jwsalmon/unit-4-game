@@ -1,6 +1,3 @@
-
-$(document).ready(function () {
-
     // variables
     var dsChar1 = {
         name: "Boba Fett",
@@ -111,6 +108,41 @@ $(document).ready(function () {
     var charChoiceDSImage = [];
 
     var numPlayerAttacks = 1;
+    //set up selection area
+    function selectionAreaSetup(rowTag,indicesArray,charaterArray,index){
+        var choiceDivTag = $("<div>");
+        var choiceImgDivTag = $("<div>");
+        var choiceImgNampPTag = $("<p>");
+        var choiceImageTag = $("<img>");
+        var choiceImgEnrgyPTag = $("<p>");
+        //setup col div
+        choiceDivTag.addClass("col-md-2 rowCharChoice");
+        //setup Image Dive
+        choiceImgDivTag.addClass("CharImg");
+        //setup Name <p> tag
+        var charNameId = "CharName" + index;
+        choiceImgNampPTag.attr("id", charNameId);
+        choiceImgNampPTag.text(charaterArray[indicesArray[index]].name);
+        //setup HP <p> tag
+        var charEnergyID = "CharEnergy" + index;
+        choiceImgEnrgyPTag.attr("id", charEnergyID);
+        choiceImgEnrgyPTag.text(charaterArray[indicesArray[index]].HP);
+
+        choiceImageTag.attr("src", charaterArray[indicesArray[index]].image);
+        choiceImageTag.attr("alt", "default");
+        choiceImageTag.attr("height", "150px");
+        choiceImageTag.attr("width", "150px");
+        choiceImageTag.addClass("charBtn");
+        choiceImageTag.attr("Data-Side", charaterArray[indicesArray[index]].Side);
+        choiceImageTag.attr("Data-CharObj", indicesArray[index]);
+        // console.log(darkSide[charChoiceDSImage[i]].image)
+        // console.log(dsChoiceImageTag);
+        choiceImgDivTag.append(choiceImgNampPTag);
+        choiceImgDivTag.append(choiceImageTag);
+        choiceImgDivTag.append(choiceImgEnrgyPTag);
+        choiceDivTag.append(choiceImgDivTag); 
+        rowTag.append(choiceDivTag);       
+    }
 
     //clean up layout for start of game
     function gameReset() {
@@ -130,79 +162,13 @@ $(document).ready(function () {
         charChoiceDSImage.push(dSCharPick1);
         charChoiceDSImage.push(dSCharPick2);
         for (var i = 0; i < charChoiceDSImage.length; i++) {
-            var dsChoiceDivTag = $("<div>");
-            var dsChoiceImgDivTag = $("<div>");
-            var dsChoiceImgNampPTag = $("<p>");
-            var dsChoiceImageTag = $("<img>");
-            var dsChoiceImgEnrgyPTag = $("<p>");
-            //setup col div
-            dsChoiceDivTag.addClass("col-md-2 rowCharChoice");
-            //setup Image Dive
-            dsChoiceImgDivTag.addClass("CharImg");
-            //setup Name <p> tag
-            var charNameId = "CharName" + i;
-            dsChoiceImgNampPTag.attr("id", charNameId);
-            dsChoiceImgNampPTag.text(darkSide[charChoiceDSImage[i]].name);
-            //setup HP <p> tag
-            var charEnergyID = "CharEnergy" + i;
-            dsChoiceImgEnrgyPTag.attr("id",charEnergyID);
-            dsChoiceImgEnrgyPTag.text(darkSide[charChoiceDSImage[i]].HP);
-
-            dsChoiceImageTag.attr("src", darkSide[charChoiceDSImage[i]].image);
-            dsChoiceImageTag.attr("alt", "default");
-            dsChoiceImageTag.attr("height", "150px");
-            dsChoiceImageTag.attr("width", "150px");
-            dsChoiceImageTag.addClass("charBtn");
-            dsChoiceImageTag.attr("Data-Side",darkSide[charChoiceDSImage[i]].Side);
-            dsChoiceImageTag.attr("Data-CharObj",charChoiceDSImage[i]);
-           // console.log(darkSide[charChoiceDSImage[i]].image)
-           // console.log(dsChoiceImageTag);
-            dsChoiceImgDivTag.append(dsChoiceImgNampPTag);
-            dsChoiceImgDivTag.append(dsChoiceImageTag);
-            dsChoiceImgDivTag.append(dsChoiceImgEnrgyPTag);
-            dsChoiceDivTag.append(dsChoiceImgDivTag);
-            
-           // console.log(dsChoiceDivTag);
-            $("#SelectRow").append(dsChoiceDivTag);
-           
+            var rowTag = $("#SelectRow");
+            selectionAreaSetup(rowTag,charChoiceDSImage,darkSide,i);
         }
         for (var i = 0; i < charChoiceLSImage.length; i++) {
             //console.log("Light Side: i is currently set to " + i);
-            var lsChoiceDivTag = $("<div>");
-            var lsChoiceImgDivTag = $("<div>");
-            var lsChoiceImgNampPTag = $("<p>");
-            var lsChoiceImageTag = $("<img>");
-            var lsChoiceImgEnrgyPTag = $("<p>");
-            //setup col div
-            lsChoiceDivTag.addClass("col-md-2 rowCharChoice");
-            //setup Image Dive
-            lsChoiceImgDivTag.addClass("CharImg");
-            //setup Name <p> tag
-            var charNameId = "CharName" + i;
-            lsChoiceImgNampPTag.attr("id", charNameId);
-            lsChoiceImgNampPTag.text(lightSide[charChoiceLSImage[i]].name);
-            //setup HP <p> tag
-            var charEnergyID = "CharEnergy" + i;
-            lsChoiceImgEnrgyPTag.attr("id",charEnergyID);
-            lsChoiceImgEnrgyPTag.text(lightSide[charChoiceLSImage[i]].HP);
-
-            lsChoiceImageTag.attr("src", lightSide[charChoiceLSImage[i]].image);
-            lsChoiceImageTag.attr("alt", "default");
-            lsChoiceImageTag.attr("height", "150px");
-            lsChoiceImageTag.attr("width", "150px");
-            lsChoiceImageTag.addClass("charBtn");
-            lsChoiceImageTag.attr("Data-Side",lightSide[charChoiceLSImage[i]].Side);
-            lsChoiceImageTag.attr("Data-CharObj",charChoiceLSImage[i]);
-            //console.log("Light side: "+lightSide[charChoiceLSImage[i]].image)
-           // console.log("light side: "+lsChoiceImageTag);
-            lsChoiceImgDivTag.append(lsChoiceImgNampPTag);
-            lsChoiceImgDivTag.append(lsChoiceImageTag);
-            lsChoiceImgDivTag.append(lsChoiceImgEnrgyPTag);
-            lsChoiceDivTag.append(lsChoiceImgDivTag);
-            
-            //console.log(lsChoiceDivTag);
-            $("#SelectRow").append(lsChoiceDivTag);
-
+            var rowTag = $("#SelectRow");
+            selectionAreaSetup(rowTag,charChoiceLSImage,lightSide,i);
         }
         //hide div since player hasn't selected charater
         $("#SelectedChar").hide();
@@ -210,14 +176,16 @@ $(document).ready(function () {
         $(".defnderRow1").hide();
         playerChar = {};
         DefenderChar = {};
+        charChoiceDSImage=[];
+        charChoiceLSImage=[];
 
 
-    }
+    };
 
-    window.onload = gameReset();
+    // window.onload = 
     //let player select charater
     //(optional added selection light or dark side)
-    $(".charBtn").on("click", function () {
+    function selectPlayer() {
         console.log("we are in click method for selecting player charater");
         //setup player Selection
         console.log("you selected a " + $(this).attr("Data-Side") + " charater");
@@ -241,6 +209,7 @@ $(document).ready(function () {
         }
         if (playerChar.Side === "dark") {//set light Side Defenders
             //todo rewrite this like above
+           // for(var i=0,i<)
             $("#defCharName1").text(lightSide[lSCharPick1].name);
             $("#defCharImg1").attr("src", lightSide[lSCharPick1].image);
             $("#defCharEnergy1").text(lightSide[lSCharPick1].HP);
@@ -273,7 +242,7 @@ $(document).ready(function () {
         }
 
 
-    });
+    }
 
     //let player select Defender, 
 
@@ -284,8 +253,9 @@ $(document).ready(function () {
       this attack power increases on each attack.
       Defender will counter attack with set counter power,which 
       does not increase */
+    $(document).ready(function () {
+        gameReset();
+        $(".charBtn").on("click", selectPlayer);
 
-
-
-    //end program;
-});
+        //end program;
+    });
