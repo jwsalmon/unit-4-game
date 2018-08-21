@@ -154,7 +154,7 @@ function selectionAreaSetup(rowTag, indicesArray, charaterArray, index, isPlayer
         choiceImageTag.addClass("charBtn");
     }
     else {
-        choiceImageTag.addClass("defCharBtn");
+        choiceImageTag.addClass("btnDefChar");
     }
     choiceImageTag.attr("Data-Side", charaterArray[indicesArray[index]].Side);
     choiceImageTag.attr("Data-CharObj", indicesArray[index]);
@@ -167,6 +167,16 @@ function selectionAreaSetup(rowTag, indicesArray, charaterArray, index, isPlayer
 
 //clean up layout for start of game
 function gameReset() {
+    var rowTag = $("#SelectRow");
+    //hide div since player hasn't selected charater
+    rowTag.empty();
+    $("#SelectedChar").hide();
+    $(".defnderRow").empty();
+    $(".selDefnderRow").hide();
+
+    playerChar = {};
+    defenderChar = {};
+
     //setup player selection area
     lSCharPick1 = Math.floor(Math.random() * lightSide.length);
     lSCharPick2 = Math.floor(Math.random() * lightSide.length);
@@ -182,19 +192,12 @@ function gameReset() {
     charChoiceLSImage.push(lSCharPick2);
     charChoiceDSImage.push(dSCharPick1);
     charChoiceDSImage.push(dSCharPick2);
-    var rowTag = $("#SelectRow");
     for (var i = 0; i < charChoiceDSImage.length; i++) {
         selectionAreaSetup(rowTag, charChoiceDSImage, darkSide, i, true);
     }
     for (var i = 0; i < charChoiceLSImage.length; i++) {
         selectionAreaSetup(rowTag, charChoiceLSImage, lightSide, i, true);
     }
-    //hide div since player hasn't selected charater
-    $("#SelectedChar").hide();
-    $(".defnderRow").empty();
-    $(".selDefnderRow").hide();
-    playerChar = {};
-    defenderChar = {};
 }
 
 //let player select charater
@@ -214,7 +217,7 @@ function selectPlayer() {
     $("#selCarImg").attr("src", playerChar.image);
     $("#SelCharEnergy").text(playerChar.HP);
     $("#SelectedChar").show();
-
+    $("#SelectRow").hide();
     //setup Attackers
     attckCharPick = Math.floor(Math.random() * lightSide.length);
     if ((attckCharPick === lSCharPick1) || (attckCharPick === lSCharPick2) ||
@@ -223,6 +226,7 @@ function selectPlayer() {
     }
     charChoiceLSImage.push(attckCharPick);
     charChoiceDSImage.push(attckCharPick);
+
     var rowTag = $(".defnderRow");
     //rowTag.empty();
     if (playerChar.Side === "dark") {//set light Side Defenders
@@ -235,12 +239,15 @@ function selectPlayer() {
             selectionAreaSetup(rowTag, charChoiceDSImage, darkSide, i, false);
         }
     }
-    rowTag.show();
+     //click method for Defender Charater Select
+     $(".btnDefChar").on("click", selDefender);
+     //   rowTag.show();
 }
 
 //let player select Defender 
 function selDefender() {
     console.log("We just entered select Defender");
+    console.log("defender is a " + $(this).attr("Data-Side") + " side charater")
     if ($(this).attr("Data-Side") === "dark") {
         defenderChar = darkSide[$(this).attr("Data-CharObj")];
     }
@@ -252,6 +259,10 @@ function selDefender() {
     $("#selDefenderImg").attr("src", defenderChar.image);
     $("#selDefCharEnergy").text(defenderChar.HP);
     $(".selDefnderRow").show();
+    /*
+    todo - hide or remove defender selected.
+    $(this).hide();*/
+
 
 }
 
@@ -261,16 +272,15 @@ function selDefender() {
   this attack power increases on each attack.
   Defender will counter attack with set counter power,which 
   does not increase */
-window.load = gameReset();
+
 $(document).ready(function () {
     //reset page for start of game
-    
-    
+    gameReset();
+
+
     //click method for Player Charater Select
     $(".charBtn").on("click", selectPlayer);
-
-    //click method for Defender Charater Select
-    $(".defCharBtn").on("click", selDefender);
+ 
 
 
 
