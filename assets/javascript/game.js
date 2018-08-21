@@ -117,12 +117,12 @@ $(document).ready(function () {
         //setup player selection area
         lSCharPick1 = Math.floor(Math.random() * lightSide.length);
         lSCharPick2 = Math.floor(Math.random() * lightSide.length);
-        if (lSCharPick1 === lSCharPick2) {
+        while (lSCharPick1 === lSCharPick2) {
             lSCharPick2 = Math.floor(Math.random() * lightSide.length);
         }
         dSCharPick1 = Math.floor(Math.random() * darkSide.length);
         dSCharPick2 = Math.floor(Math.random() * darkSide.length);
-        if (dSCharPick1 === dSCharPick2) {
+        while (dSCharPick1 === dSCharPick2) {
             dSCharPick2 = Math.floor(Math.random() * darkSide.length);
         }
         charChoiceLSImage.push(lSCharPick1);
@@ -167,6 +167,7 @@ $(document).ready(function () {
            
         }
         for (var i = 0; i < charChoiceLSImage.length; i++) {
+            //console.log("Light Side: i is currently set to " + i);
             var lsChoiceDivTag = $("<div>");
             var lsChoiceImgDivTag = $("<div>");
             var lsChoiceImgNampPTag = $("<p>");
@@ -190,10 +191,10 @@ $(document).ready(function () {
             lsChoiceImageTag.attr("height", "150px");
             lsChoiceImageTag.attr("width", "150px");
             lsChoiceImageTag.addClass("charBtn");
-            dsChoiceImageTag.attr("Data-Side",lightSide[charChoiceLSImage[i]].Side);
-            dsChoiceImageTag.attr("Data-CharObj",charChoiceLSImage[i]);
-            //console.log(lightSide[charChoiceLSImage[i]].image)
-            //console.log(lsChoiceImageTag);
+            lsChoiceImageTag.attr("Data-Side",lightSide[charChoiceLSImage[i]].Side);
+            lsChoiceImageTag.attr("Data-CharObj",charChoiceLSImage[i]);
+            //console.log("Light side: "+lightSide[charChoiceLSImage[i]].image)
+           // console.log("light side: "+lsChoiceImageTag);
             lsChoiceImgDivTag.append(lsChoiceImgNampPTag);
             lsChoiceImgDivTag.append(lsChoiceImageTag);
             lsChoiceImgDivTag.append(lsChoiceImgEnrgyPTag);
@@ -215,7 +216,7 @@ $(document).ready(function () {
 
     window.onload = gameReset();
     //let player select charater
-    //(optional add possibity of selecting light or dark side)
+    //(optional added selection light or dark side)
     $(".charBtn").on("click", function () {
         console.log("we are in click method for selecting player charater");
         //setup player Selection
@@ -238,13 +239,13 @@ $(document).ready(function () {
             (attckCharPick === dSCharPick1) || (attckCharPick === dSCharPick2)) {
             attckCharPick = Math.floor(Math.random() * lightSide.length);
         }
-        if (playerChar.Side === "dark") {//set Dark Side Defenders
-
+        if (playerChar.Side === "dark") {//set light Side Defenders
+            //todo rewrite this like above
             $("#defCharName1").text(lightSide[lSCharPick1].name);
             $("#defCharImg1").attr("src", lightSide[lSCharPick1].image);
             $("#defCharEnergy1").text(lightSide[lSCharPick1].HP);
             $(".defChoice").attr("value", lightSide[lSCharPick1]);
-            $("#defCharName2").text(lightSide[dSCharPick2].name);
+            $("#defCharName2").text(lightSide[lSCharPick2].name);
             $("#defCharImg2").attr("src", lightSide[lSCharPick2].image);
             $("#defCharEnergy2").text(lightSide[lSCharPick2].HP);
             $(".CharChoice").attr("Data-CharObj", lightSide[lSCharPick2]);
@@ -254,7 +255,7 @@ $(document).ready(function () {
             $(".CharChoice").attr("Data-CharObj", lightSide[attckCharPick]);
             $(".defnderRow").show();
         }
-        else {
+        else {//set Dark side defenders
             $("#defCharName1").text(darkSide[dSCharPick1].name);
             $("#defCharImg1").attr("src", darkSide[dSCharPick1].image);
             $("#defCharEnergy1").text(darkSide[dSCharPick1].HP);
