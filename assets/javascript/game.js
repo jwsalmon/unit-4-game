@@ -98,7 +98,7 @@ var lsChar6 = {
 var darkSide = [dsChar1, dsChar2, dsChar3, dsChar4, dsChar5, dsChar6];
 var lightSide = [lsChar1, lsChar2, lsChar3, lsChar4, lsChar5, lsChar6];
 var playerChar;
-var DefenderChar;
+var defenderChar;
 var lSCharPick1 = -1;
 var lSCharPick2 = -1;
 var dSCharPick1 = -1;
@@ -121,15 +121,18 @@ function selectionAreaSetup(rowTag, indicesArray, charaterArray, index, isPlayer
     choiceImgDivTag.addClass("CharImg");
     //setup Name <p> tag
     var charNameId = "";
-    if (isPlayerSelection){
-    charNameId = "CharName" + index;
+    //setup Name p tag ID: it is set different based on whether we are setting up
+    // Player selection area or Defender area
+    if (isPlayerSelection) {
+        charNameId = "CharName" + index;
     }
-    else{
+    else {
         charNameId = "defCharName" + index;
     }
     choiceImgNampPTag.attr("id", charNameId);
     choiceImgNampPTag.text(charaterArray[indicesArray[index]].name);
-    //setup HP <p> tag
+    //setup HP <p> tag: setup ID based on whether we are setting up 
+    //Player selection area or Defender area
     var charEnergyID = "";
     if (isPlayerSelection) {
         charEnergyID = "CharEnergy" + index;
@@ -145,17 +148,16 @@ function selectionAreaSetup(rowTag, indicesArray, charaterArray, index, isPlayer
     choiceImageTag.attr("alt", "default");
     choiceImageTag.attr("height", "150px");
     choiceImageTag.attr("width", "150px");
+    //setup click class: set to different classe based on whether we are setting up
+    //Player selection area or Defendor area
     if (isPlayerSelection) {
         choiceImageTag.addClass("charBtn");
     }
     else {
         choiceImageTag.addClass("defCharBtn");
-
     }
     choiceImageTag.attr("Data-Side", charaterArray[indicesArray[index]].Side);
     choiceImageTag.attr("Data-CharObj", indicesArray[index]);
-    // console.log(darkSide[charChoiceDSImage[i]].image)
-    // console.log(dsChoiceImageTag);
     choiceImgDivTag.append(choiceImgNampPTag);
     choiceImgDivTag.append(choiceImageTag);
     choiceImgDivTag.append(choiceImgEnrgyPTag);
@@ -185,19 +187,16 @@ function gameReset() {
         selectionAreaSetup(rowTag, charChoiceDSImage, darkSide, i, true);
     }
     for (var i = 0; i < charChoiceLSImage.length; i++) {
-        //console.log("Light Side: i is currently set to " + i);
-        //       var rowTag = $("#SelectRow");
         selectionAreaSetup(rowTag, charChoiceLSImage, lightSide, i, true);
     }
     //hide div since player hasn't selected charater
     $("#SelectedChar").hide();
-    $(".defnderRow").hide();
-    $(".defnderRow1").hide();
+    $(".defnderRow").empty();
+    $(".selDefnderRow").hide();
     playerChar = {};
-    DefenderChar = {};
-};
+    defenderChar = {};
+}
 
-// window.onload = 
 //let player select charater
 //(optional added selection light or dark side)
 function selectPlayer() {
@@ -225,16 +224,13 @@ function selectPlayer() {
     charChoiceLSImage.push(attckCharPick);
     charChoiceDSImage.push(attckCharPick);
     var rowTag = $(".defnderRow");
-    rowTag.empty();
+    //rowTag.empty();
     if (playerChar.Side === "dark") {//set light Side Defenders
-        //todo rewrite this like above
         for (var i = 0; i < charChoiceLSImage.length; i++) {
             selectionAreaSetup(rowTag, charChoiceLSImage, lightSide, i, false);
         }
     }
     else {//set Dark side defenders
-        console.log("setting up Dark side defenders");
-        console.log("adding defenders to: " + rowTag);
         for (var i = 0; i < charChoiceDSImage.length; i++) {
             selectionAreaSetup(rowTag, charChoiceDSImage, darkSide, i, false);
         }
@@ -242,8 +238,22 @@ function selectPlayer() {
     rowTag.show();
 }
 
-//let player select Defender, 
+//let player select Defender 
+function selDefender() {
+    console.log("We just entered select Defender");
+    if ($(this).attr("Data-Side") === "dark") {
+        defenderChar = darkSide[$(this).attr("Data-CharObj")];
+    }
+    else {
+        defenderChar = lightSide[$(this).attr("Data-CharObj")];
+    }
+    console.log(defenderChar);
+    $("#selDefCharName").text(defenderChar.name);
+    $("#selDefenderImg").attr("src", defenderChar.image);
+    $("#selDefCharEnergy").text(defenderChar.HP);
+    $(".selDefnderRow").show();
 
+}
 
 /*Attack logic:
   when click on attack button
@@ -251,9 +261,20 @@ function selectPlayer() {
   this attack power increases on each attack.
   Defender will counter attack with set counter power,which 
   does not increase */
+window.load = gameReset();
 $(document).ready(function () {
-    gameReset();
+    //reset page for start of game
+    
+    
+    //click method for Player Charater Select
     $(".charBtn").on("click", selectPlayer);
+
+    //click method for Defender Charater Select
+    $(".defCharBtn").on("click", selDefender);
+
+
+
+
 
     //end program;
 });
