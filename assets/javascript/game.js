@@ -380,13 +380,13 @@ function isEmpty(obj) {
   Defender will counter attack with set counter power,which 
   does not increase */
 function playerAttack() {
-    if ( isEmpty(defenderChar) && isEmpty(playerChar)) {
+/*     if ( isEmpty(defenderChar) && isEmpty(playerChar)) {
         return;
     }
     else if (isEmpty(defenderChar)){
         $("#plyAnounce").text("No defender here")
         return;
-    }
+    } */
     var playerAttck = playerChar.AP * numPlayerAttacks;
     var announce = "You attacked " + defenderChar.name + " for " + playerAttck + " damage";
     var announce2 = defenderChar.name + " attacked you back for " + defenderChar.CAP + " damage";
