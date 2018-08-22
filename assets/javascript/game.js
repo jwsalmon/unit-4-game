@@ -220,12 +220,19 @@ function selectPlayer() {
     $("#SelectRow").hide();
     //setup Attackers
     attckCharPick = Math.floor(Math.random() * lightSide.length);
-    if ((attckCharPick === lSCharPick1) || (attckCharPick === lSCharPick2) ||
-        (attckCharPick === dSCharPick1) || (attckCharPick === dSCharPick2)) {
+    //make sure attack char pick is not in dark side charater array
+    while (charChoiceDSImage.indexOf(attckCharPick) !== -1) {
         attckCharPick = Math.floor(Math.random() * lightSide.length);
     }
-    charChoiceLSImage.push(attckCharPick);
+    //add attack char pick to dark side charater array
     charChoiceDSImage.push(attckCharPick);
+    //make sure attack char pick is not in light side charater array
+    while (charChoiceLSImage.indexOf(attckCharPick) !== -1) {
+        attckCharPick = Math.floor(Math.random() * lightSide.length);
+    }
+    //add attack char pick to light side charater array
+    charChoiceLSImage.push(attckCharPick);
+
 
     var rowTag = $(".defnderRow");
     //rowTag.empty();
@@ -239,30 +246,51 @@ function selectPlayer() {
             selectionAreaSetup(rowTag, charChoiceDSImage, darkSide, i, false);
         }
     }
-     //click method for Defender Charater Select
-     $(".btnDefChar").on("click", selDefender);
-     //   rowTag.show();
+    //click method for Defender Charater Select
+    $(".btnDefChar").on("click", selDefender);
+    //   rowTag.show();
 }
+
 
 //let player select Defender 
 function selDefender() {
+    var remDefender;
+    var rowTag = $(".defnderRow");
+    rowTag.empty();
     console.log("We just entered select Defender");
     console.log("defender is a " + $(this).attr("Data-Side") + " side charater")
     if ($(this).attr("Data-Side") === "dark") {
         defenderChar = darkSide[$(this).attr("Data-CharObj")];
+        //remove selected defender from dark side charater array
+        var charNum = parseInt($(this).attr("Data-CharObj"));
+        remDefender = charChoiceDSImage.indexOf(charNum);
+        charChoiceDSImage.splice(remDefender, 1);
+        for (var i = 0; i < charChoiceDSImage.length; i++) {
+            selectionAreaSetup(rowTag, charChoiceDSImage, darkSide, i, false);
+        }
+
     }
     else {
         defenderChar = lightSide[$(this).attr("Data-CharObj")];
+        //console.log($(this).attr("Data-CharObj"));
+        //remove selected defender from dark side charater array
+        var charNumb = parseInt($(this).attr("Data-CharObj"));
+        remDefender = charChoiceLSImage.indexOf(charNumb);
+        //console.log("removing index " + remDefender);
+        //console.log(charChoiceLSImage);
+        charChoiceLSImage.splice(remDefender, 1);
+        //console.log(charChoiceLSImage);
+        for (var i = 0; i < charChoiceLSImage.length; i++) {
+            selectionAreaSetup(rowTag, charChoiceLSImage, lightSide, i, false);
+        }
     }
     console.log(defenderChar);
     $("#selDefCharName").text(defenderChar.name);
     $("#selDefenderImg").attr("src", defenderChar.image);
     $("#selDefCharEnergy").text(defenderChar.HP);
     $(".selDefnderRow").show();
-    /*
-    todo - hide or remove defender selected.
-    $(this).hide();*/
-
+    //click method for Defender Charater Select
+    $(".btnDefChar").on("click", selDefender);
 
 }
 
@@ -280,7 +308,7 @@ $(document).ready(function () {
 
     //click method for Player Charater Select
     $(".charBtn").on("click", selectPlayer);
- 
+
 
 
 
