@@ -107,6 +107,8 @@ var attckCharPick = -1;
 var charChoiceLSImage = [];
 var charChoiceDSImage = [];
 var isRestart = false;
+var isDefenderCharSel = false;
+var isPlayerCharSel = false;
 
 var numPlayerAttacks = 1;
 //set up selection area
@@ -169,6 +171,8 @@ function selectionAreaSetup(rowTag, indicesArray, charaterArray, index, isPlayer
 //clean up layout for start of game
 function gameReset() {
     var rowTag = $("#SelectRow");
+    isDefenderCharSel = false;
+    isPlayerCharSel = false;
     //hide div since player hasn't selected charater
     rowTag.empty();
     $("#plyAnounce").empty();
@@ -261,6 +265,7 @@ function selectPlayer() {
     //click method for Defender Charater Select
     $(".btnDefChar").on("click", selDefender);
     //   rowTag.show();
+    isPlayerCharSel = true;
 }
 
 
@@ -308,7 +313,7 @@ function selDefender() {
     $(".selDefnderRow").show();
     //click method for Defender Charater Select
     $(".btnDefChar").on("click", selDefender);
-
+    isDefenderCharSel = true;
 }
 
 function winner() {
@@ -328,24 +333,28 @@ function winner() {
         if (charChoiceLSImage.length > 0) {
             $("#plyAnounce").text("You have defeated " + defenderChar.name + "! You can choose another enemy to fight. ");
             defenderChar = {};
+            isDefenderCharSel = false;
         }
         else {
             $("#plyAnounce").text("You Won!!!! GAME OVER!!!");
             $("#plyAnounce").append("<br>");
             $("#plyAnounce").append(button);
             isRestart = true;
+            isDefenderCharSel = false;
         }
     }
     else{
         if (charChoiceLSImage.length > 0) {
             $("#plyAnounce").text("You have defeated " + defenderChar.name + "! You can choose another enemy to fight. ");
             defenderChar = {};
+            isDefenderCharSel = false;
         }
         else {
             $("#plyAnounce").text("You Won!!!! GAME OVER!!!");
             $("#plyAnounce").append("<br>");
             $("#plyAnounce").append(button);
             isRestart = true;
+            isDefenderCharSel = false;
         }
 
     }
@@ -380,13 +389,13 @@ function isEmpty(obj) {
   Defender will counter attack with set counter power,which 
   does not increase */
 function playerAttack() {
-/*     if ( isEmpty(defenderChar) && isEmpty(playerChar)) {
+     if ( !(isDefenderCharSel) && !(isPlayerCharSel)) {
         return;
     }
-    else if (isEmpty(defenderChar)){
+    else if (!(isDefenderCharSel)){
         $("#plyAnounce").text("No defender here")
         return;
-    } */
+    } 
     var playerAttck = playerChar.AP * numPlayerAttacks;
     var announce = "You attacked " + defenderChar.name + " for " + playerAttck + " damage";
     var announce2 = defenderChar.name + " attacked you back for " + defenderChar.CAP + " damage";
