@@ -106,6 +106,7 @@ var dSCharPick2 = -1;
 var attckCharPick = -1;
 var charChoiceLSImage = [];
 var charChoiceDSImage = [];
+var isRestart = false;
 
 var numPlayerAttacks = 1;
 //set up selection area
@@ -170,12 +171,17 @@ function gameReset() {
     var rowTag = $("#SelectRow");
     //hide div since player hasn't selected charater
     rowTag.empty();
+    $("#plyAnounce").empty();
+    $("#defAnounce").empty();
     $("#SelectedChar").hide();
     $(".defnderRow").empty();
     $(".selDefnderRow").hide();
+    $("#SelectRow").show();
 
     playerChar = {};
     defenderChar = {};
+    charChoiceLSImage = [];
+    charChoiceDSImage = [];
 
     //setup player selection area
     lSCharPick1 = Math.floor(Math.random() * lightSide.length);
@@ -198,6 +204,9 @@ function gameReset() {
     for (var i = 0; i < charChoiceLSImage.length; i++) {
         selectionAreaSetup(rowTag, charChoiceLSImage, lightSide, i, true);
     }
+    if (isRestart){
+        $(".charBtn").on("click", selectPlayer);
+    }
 }
 
 //let player select charater
@@ -205,12 +214,15 @@ function gameReset() {
 function selectPlayer() {
     console.log("we are in click method for selecting player charater");
     //setup player Selection
+    var pCharater = {};
     console.log("you selected a " + $(this).attr("Data-Side") + " charater");
     if ($(this).attr("Data-Side") === "dark") {
-        playerChar = darkSide[$(this).attr("Data-CharObj")];
+        pCharater = darkSide[$(this).attr("Data-CharObj")];
+        playerChar = Object.create(pCharater);
     }
     else {
-        playerChar = lightSide[$(this).attr("Data-CharObj")];
+        pCharater = lightSide[$(this).attr("Data-CharObj")];
+        playerChar = Object.create(pCharater);
     }
     console.log(playerChar);
     $("#selCharName").text(playerChar.name);
@@ -255,12 +267,16 @@ function selectPlayer() {
 //let player select Defender 
 function selDefender() {
     var remDefender;
+    var dCharater = {};
     var rowTag = $(".defnderRow");
     rowTag.empty();
+    $("#plyAnounce").empty();
+    $("#defAnounce").empty();
     console.log("We just entered select Defender");
     console.log("defender is a " + $(this).attr("Data-Side") + " side charater")
     if ($(this).attr("Data-Side") === "dark") {
-        defenderChar = darkSide[$(this).attr("Data-CharObj")];
+        dCharater = darkSide[$(this).attr("Data-CharObj")];
+        defenderChar = Object.create(dCharater);
         //remove selected defender from dark side charater array
         var charNum = parseInt($(this).attr("Data-CharObj"));
         remDefender = charChoiceDSImage.indexOf(charNum);
@@ -271,7 +287,8 @@ function selDefender() {
 
     }
     else {
-        defenderChar = lightSide[$(this).attr("Data-CharObj")];
+        dCharater = lightSide[$(this).attr("Data-CharObj")];
+        defenderChar = Object.create(dCharater);
         //console.log($(this).attr("Data-CharObj"));
         //remove selected defender from dark side charater array
         var charNumb = parseInt($(this).attr("Data-CharObj"));
@@ -294,12 +311,102 @@ function selDefender() {
 
 }
 
+function winner() {
+    /*need to remove loosing defender anounce defeat of defender and
+     ask to select new defender if there is one
+     if no more defender anouce win show restart button*/
+    $(".selDefnderRow").hide();
+    $("#plyAnounce").empty();
+    $("#defAnounce").empty();
+    //add button to restart
+    var button = $("<button>");
+    button.text("restart");
+    button.addClass("restart");
+    button.on("click", gameReset);
+
+    if (playerChar.Side == "dark") {
+        if (charChoiceLSImage.length > 0) {
+            $("#plyAnounce").text("You have defeated " + defenderChar.name + "! You can choose another enemy to fight. ");
+            defenderChar = {};
+        }
+        else {
+            $("#plyAnounce").text("You Won!!!! GAME OVER!!!");
+            $("#plyAnounce").append("<br>");
+            $("#plyAnounce").append(button);
+            isRestart = true;
+        }
+    }
+    else{
+        if (charChoiceLSImage.length > 0) {
+            $("#plyAnounce").text("You have defeated " + defenderChar.name + "! You can choose another enemy to fight. ");
+            defenderChar = {};
+        }
+        else {
+            $("#plyAnounce").text("You Won!!!! GAME OVER!!!");
+            $("#plyAnounce").append("<br>");
+            $("#plyAnounce").append(button);
+            isRestart = true;
+        }
+
+    }
+
+}
+function looser() {
+    //clear announcements and then annouce loss.
+    $("#plyAnounce").empty();
+    $("#defAnounce").empty();
+    $("#plyAnounce").text("You have been defeated ... GAME OVER!!!");
+    //add button to restart
+    var button = $("<button>");
+    button.text("restart");
+    button.addClass("restart");
+    $("#plyAnounce").append("<br>");
+    $("#plyAnounce").append(button);
+    button.on("click", gameReset);
+    isRestart = true;
+}
+
+function isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}
 /*Attack logic:
   when click on attack button
   player charater attacks with set attack power,
   this attack power increases on each attack.
   Defender will counter attack with set counter power,which 
   does not increase */
+function playerAttack() {
+    if ( isEmpty(defenderChar) && isEmpty(playerChar)) {
+        return;
+    }
+    else if (isEmpty(defenderChar)){
+        $("#plyAnounce").text("No defender here")
+        return;
+    }
+    var playerAttck = playerChar.AP * numPlayerAttacks;
+    var announce = "You attacked " + defenderChar.name + " for " + playerAttck + " damage";
+    var announce2 = defenderChar.name + " attacked you back for " + defenderChar.CAP + " damage";
+    $("#plyAnounce").text(announce);
+    $("#defAnounce").text(announce2);
+    defenderChar.HP -= playerAttck;
+    numPlayerAttacks++;
+    playerChar.HP -= defenderChar.CAP;
+    $("#selDefCharEnergy").text(defenderChar.HP);
+    $("#SelCharEnergy").text(playerChar.HP);
+
+    if (defenderChar.HP <= 0) {
+        winner();
+    }
+
+    if (playerChar.HP <= 0) {
+        looser();
+    }
+
+}
 
 $(document).ready(function () {
     //reset page for start of game
@@ -308,6 +415,7 @@ $(document).ready(function () {
 
     //click method for Player Charater Select
     $(".charBtn").on("click", selectPlayer);
+    $(".Attack").on("click", playerAttack);
 
 
 
