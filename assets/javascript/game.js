@@ -173,6 +173,7 @@ function gameReset() {
     var rowTag = $("#SelectRow");
     isDefenderCharSel = false;
     isPlayerCharSel = false;
+    numPlayerAttacks = 1;
     //hide div since player hasn't selected charater
     rowTag.empty();
     $("#plyAnounce").empty();
