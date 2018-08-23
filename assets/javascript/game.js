@@ -345,7 +345,7 @@ function winner() {
         }
     }
     else{
-        if (charChoiceLSImage.length > 0) {
+        if (charChoiceDSImage.length > 0) {
             $("#plyAnounce").text("You have defeated " + defenderChar.name + "! You can choose another enemy to fight. ");
             defenderChar = {};
             isDefenderCharSel = false;
